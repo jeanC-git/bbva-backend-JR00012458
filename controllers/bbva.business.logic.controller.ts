@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import axios from 'axios';
 import { success, error } from "../utils/api.response";
 import { sendSMS } from '../services/aws.sns';
-import { bbvaServiceUpdateBalanceFailedMsg, externalServiceResFailedMsg, externalServiceResSuccessMsg, transactionDataInvalidMsg, transactionSuccessMsg } from '../constants/responses.messages';
+import { bbvaServiceUpdateBalanceFailedMsg, externalServiceResFailedMsg, externalServiceResSuccessMsg, transactionDataInvalidMsg, transactionFailedMsg, transactionSuccessMsg } from '../constants/responses.messages';
 import User from '../models/user';
 
 export const validateTransaction = async (req: Request, res: Response) => {
@@ -18,8 +18,10 @@ export const validateTransaction = async (req: Request, res: Response) => {
     // const phone_number = `+51984240852`;
     // const phone_number = `+51967274833`;
 
-    let smsString = `[JC BBVAPresentation][${user.phone_number}] `;
-    smsString += `${user.name}, `;
+    let smsString = `[Presentación BBVA]
+     `;
+    smsString += `[${user.phone_number}] ${user.name},
+     `;
 
     try {
 
@@ -48,7 +50,7 @@ export const validateTransaction = async (req: Request, res: Response) => {
                 httpCode: 503
             });
 
-            smsString += externalServiceResFailedMsg;
+            smsString += transactionFailedMsg;
 
             await sendSMS(user.phone_number, smsString);
 
@@ -58,22 +60,22 @@ export const validateTransaction = async (req: Request, res: Response) => {
         const uri2 = `http://localhost:3002/bbva-services/update-balance`;
         const responseBBVAService = await callAPI(`POST`, uri2, {
             amount,
-            sender: user.id,
-            receiver: receiver_id
+            // sender: user.id,
+            // receiver: receiver_id
         });
 
         if (responseBBVAService.status != 200) {
             error(res, {
                 bodyData: {
                     messages: [
-                        externalServiceResSuccessMsg,
+                        // externalServiceResSuccessMsg,
                         bbvaServiceUpdateBalanceFailedMsg
                     ],
                 },
                 httpCode: 503
             });
 
-            smsString += bbvaServiceUpdateBalanceFailedMsg;
+            smsString += transactionFailedMsg;
 
             await sendSMS(user.phone_number, smsString);
 
@@ -99,22 +101,34 @@ export const validateTransaction = async (req: Request, res: Response) => {
 
 export const updateBalance = async (req: Request, res: Response) => {
 
-    // const { amount, sender, receiver } = req.body;
+    const { amount } = req.body;
 
-    console.log(`CLIENT EMIT EVENT`);
-    req.app.get('socket').emit(`server-update-balance`, {
-        new_bbva_balance: 100,
-        new_external_balance: 5000,
-    });
+    setTimeout(() => {
+        /**
+         * TODO: Implement login to update clients balances
+         */
 
-    return success(res, {});
+        // req.app.get('socket').emit(`server-update-balance`, {
+        //     new_bbva_balance: 0,
+        //     new_external_balance: amount,
+        // });
 
-    const number = Math.floor(Math.random() * 100);
+        // return success(res, {});
 
-    if (number % 2 === 0)
-        success(res, {});
-    else
-        error(res, {});
+        const number = Math.floor(Math.random() * 100);
+
+        if (number % 2 === 0) {
+
+            req.app.get('socket').emit(`server-update-balance`, {
+                new_bbva_balance: 0,
+                new_external_balance: 100,
+            });
+            success(res, {});
+
+        } else {
+            error(res, {});
+        }
+    }, 2000);
 
 }
 
@@ -129,14 +143,16 @@ export const validateTransactionData = async (data: any) => {
 
 export const callAPI = async (method: string, url: string, data?: Object) => {
     let status;
+
     const options = {
         method: method,
         url: url,
-        params: {}
+        params: {},
+        data: {}
     };
 
     if (typeof data !== 'undefined') {
-        options.params = data;
+        options.data = data;
     }
 
     try {
@@ -147,6 +163,8 @@ export const callAPI = async (method: string, url: string, data?: Object) => {
 
 
     } catch (err) {
+        console.log(({ err }));
+
 
         status = 500;
 

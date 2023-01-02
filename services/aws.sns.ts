@@ -27,7 +27,7 @@ export const sendSMS = async (phone_number: string, message: string) => {
             .publish(params)
             .promise();
 
-        console.log(`SMS SENDED to ${phone_number} - ${message}`, { respMsg });
+        // console.log(`SMS SENDED to ${phone_number} - ${message}`, { respMsg });
 
 
         return true;

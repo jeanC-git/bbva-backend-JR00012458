@@ -1,4 +1,4 @@
-# Telegram Bot - SOMA
+# BBVA Backend
 ## Steps to configure project
 
 

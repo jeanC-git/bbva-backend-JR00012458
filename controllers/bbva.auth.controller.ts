@@ -25,6 +25,7 @@ export const generate2FACode = async (req: Request, res: Response) => {
 
     await user.update({ sms_verification_code: code });
     await sendSMS(user.phone_number, message);
+    req.app.get('socket').emit(`server-send-2FA-code`, { message, code });
 
     success(res, {});
 }

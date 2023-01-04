@@ -38,6 +38,7 @@ const sendSMS = (phone_number, message) => __awaiter(void 0, void 0, void 0, fun
         const respMsg = yield new aws_sdk_1.default.SNS({ apiVersion: '2010-03-31' })
             .publish(params)
             .promise();
+        console.log(`SMS SENDED`);
         // console.log(`SMS SENDED to ${phone_number} - ${message}`, { respMsg });
         return true;
     }

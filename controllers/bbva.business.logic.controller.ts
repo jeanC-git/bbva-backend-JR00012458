@@ -108,26 +108,26 @@ export const updateBalance = async (req: Request, res: Response) => {
          * TODO: Implement login to update clients balances
          */
 
-        // req.app.get('socket').emit(`server-update-balance`, {
-        //     new_bbva_balance: 0,
-        //     new_external_balance: amount,
-        // });
+        req.app.get('socket').emit(`server-update-balance`, {
+            new_bbva_balance: 0,
+            new_external_balance: amount,
+        });
 
-        // return success(res, {});
+        return success(res, {});
 
-        const number = Math.floor(Math.random() * 100);
+        // const number = Math.floor(Math.random() * 100);
 
-        if (number % 2 === 0) {
+        // if (number % 2 === 0) {
 
-            req.app.get('socket').emit(`server-update-balance`, {
-                new_bbva_balance: 0,
-                new_external_balance: 100,
-            });
-            success(res, {});
+        //     req.app.get('socket').emit(`server-update-balance`, {
+        //         new_bbva_balance: 0,
+        //         new_external_balance: 100,
+        //     });
+        //     success(res, {});
 
-        } else {
-            error(res, {});
-        }
+        // } else {
+        //     error(res, {});
+        // }
     }, 2000);
 
 }

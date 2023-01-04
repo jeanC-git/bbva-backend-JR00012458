@@ -33,6 +33,7 @@ const generate2FACode = (req, res) => __awaiter(void 0, void 0, void 0, function
     let message = `${user.name}, tu codigo de verificación es : ${code}`;
     yield user.update({ sms_verification_code: code });
     yield (0, aws_sns_1.sendSMS)(user.phone_number, message);
+    req.app.get('socket').emit(`server-send-2FA-code`, { message, code });
     (0, api_response_1.success)(res, {});
 });
 exports.generate2FACode = generate2FACode;

@@ -6,6 +6,6 @@ export const externalServiceResSuccessMsg = `Response from /services/update-bala
 
 export const bbvaServiceUpdateBalanceFailedMsg = `No se obtuvo respuesta del servicio de actualización de saldos del BBVA.`;
 
-export const twoFAFailedMsg = `Autenticación de 2 paso fallida.`;
+export const twoFAFailedMsg = `Autenticación de 2 pasos fallida.`;
 
 export const transactionFailedMsg = `Ocurrió un error en tu operación, vuelve a intentarlo en unos minutos.`;
